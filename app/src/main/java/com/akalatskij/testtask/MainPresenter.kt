@@ -6,7 +6,7 @@ class MainPresenter(private  var mainView : MainView, private val mainInteractor
 
     override fun onFinishedGettingCats(cats: List<Cat>) {
         print("SET CATS $cats")
-        mainView?.setCats(cats)
+        mainView?.setCats(cats) 
     }
 
     fun getData() {
