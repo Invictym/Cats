@@ -25,8 +25,9 @@ class RealmWorker : Storage {
     }
 
     override fun removeCat(cat: Cat) {
-        realm.executeTransactionAsync { realm ->
-            realm.where(Cat::class.java).equalTo("id", cat.id).findAll().deleteAllFromRealm()
-        }
+        realm.beginTransaction()
+        realm.where(Cat::class.java).equalTo("id", cat.id).findAll().deleteAllFromRealm()
+        realm.commitTransaction()
+
     }
 }

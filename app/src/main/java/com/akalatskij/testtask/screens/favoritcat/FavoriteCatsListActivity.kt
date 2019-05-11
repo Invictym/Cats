@@ -30,7 +30,7 @@ class FavoriteCatsListActivity : AppCompatActivity(), FavoriteCatsListView, OnCa
     }
 
     override fun onCatSelected(cat: Cat,  isCheked : Boolean) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        catsPresenter.removeCat(cat)
     }
 
     override fun setCats(cat: RealmLiveData<Cat>) {
