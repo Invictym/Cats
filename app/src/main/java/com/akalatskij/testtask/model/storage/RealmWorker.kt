@@ -19,6 +19,7 @@ class RealmWorker : Storage {
             Log.d("IDD", cat.id)
             if (realm.where(Cat::class.java).equalTo("id", cat.id).findAll().isEmpty()) {
                 Log.d("IDD2", cat.id)
+                cat.save = true
                 realm.insert(cat)
             }
         }

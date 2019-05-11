@@ -5,6 +5,7 @@ import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import android.util.Log
 import com.akalatskij.testtask.model.entity.Cat
+import com.akalatskij.testtask.model.entity.CatJson
 import com.akalatskij.testtask.model.network.CatsApiService
 import com.akalatskij.testtask.model.storage.RealmLiveData
 import com.akalatskij.testtask.model.storage.RealmWorker
@@ -41,9 +42,20 @@ class MainInterator : ViewModel() {
         CatsApiService.create().getCats(10)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
+            .flatMapIterable { list -> list }
+            .map { cat: CatJson? -> convert(cat) }
+            .toList()
             .subscribe(
-                { result -> cats.postValue(result) },
+                { result -> cats.postValue(result)},
                 { error -> Log.e("Error", error.toString()) }
             )
+    }
+
+    fun convert(cat : CatJson?) : Cat {
+        if (cat != null) {
+            return Cat(cat.id, cat.url, false)
+        } else {
+           return Cat()
+        }
     }
 }

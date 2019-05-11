@@ -30,7 +30,7 @@ class MainActivity : AppCompatActivity(), MainView, OnCatListener {
 
         mainPresenter = MainPresenter(this, ViewModelProviders.of(this).get(MainInterator::class.java))
         mainPresenter.getData()
-        adapter = CatsAdapter(listOf(), this)
+        adapter = CatsAdapter(arrayListOf(), this)
 
         cats_list.adapter = adapter
         cats_list.layoutManager = GridLayoutManager(this, 2)
@@ -47,7 +47,7 @@ class MainActivity : AppCompatActivity(), MainView, OnCatListener {
         return super.onOptionsItemSelected(item)
     }
 
-    override fun setCats(cats: LiveData<List<Cat>>) {
+    override fun setCats(cats: LiveData<ArrayList<Cat>>) {
         cats_list_refresh.isRefreshing = false
         cats.observe(this, Observer { t -> if (t != null) adapter.setCats(t) })
     }
@@ -62,5 +62,5 @@ class MainActivity : AppCompatActivity(), MainView, OnCatListener {
 }
 
 interface MainView {
-    fun setCats(cats: LiveData<List<Cat>>)
+    fun setCats(cats: LiveData<ArrayList<Cat>>)
 }

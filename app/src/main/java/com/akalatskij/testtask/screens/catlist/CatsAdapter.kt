@@ -2,6 +2,7 @@ package com.akalatskij.testtask.screens.catlist
 
 import android.content.Context
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,7 +12,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import kotlinx.android.synthetic.main.cat_element_layout.view.*
 
-class CatsAdapter(private var cats: List<Cat>, val context: Context) : RecyclerView.Adapter<CatsViewHolder>() {
+class CatsAdapter(private var cats: ArrayList<Cat>, val context: Context) : RecyclerView.Adapter<CatsViewHolder>() {
 
     var listener : OnCatListener
 
@@ -38,7 +39,12 @@ class CatsAdapter(private var cats: List<Cat>, val context: Context) : RecyclerV
         return cats.size
     }
 
-    fun setCats(cats: List<Cat>) {
+    fun setCats(cats: ArrayList<Cat>) {
+        this.cats.forEach{cat: Cat -> if (!cats.contains(cat)) {
+            val pos = this.cats.indexOf(cat)
+            this.cats.remove(cat)
+            notifyItemRemoved(pos)
+        }}
         this.cats = cats
         notifyDataSetChanged()
     }
@@ -51,7 +57,10 @@ class CatsAdapter(private var cats: List<Cat>, val context: Context) : RecyclerV
             .fitCenter()
             .diskCacheStrategy(DiskCacheStrategy.SOURCE)
             .into(holder.catPhotoImage)
-        holder.catRadioButton.setOnCheckedChangeListener{buttonView, isChecked ->  listener.onCatSelected(cats[position], isChecked)}
+        Log.d("CHEEEEKED", "" + cats[position].save)
+        holder.catRadioButton.isChecked = cats[position].save
+        holder.catRadioButton.setOnCheckedChangeListener{_, isChecked ->
+            listener.onCatSelected(cats[position], isChecked)}
     }
 }
 
