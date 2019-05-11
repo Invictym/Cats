@@ -12,7 +12,7 @@
             android:layout_width="match_parent"
             android:layout_weight="2"/>
 
-    <RadioButton android:layout_width="match_parent"
+    <Switch android:layout_width="match_parent"
                  android:layout_height="match_parent"
                  android:id="@+id/cat_photo_select"
                  android:gravity="center"

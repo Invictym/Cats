@@ -1,15 +1,23 @@
 package com.akalatskij.testtask.model.entity
 
-data class Cat (
-    val breeds: List<Any>,
-    val categories: List<Category>,
-    val height: Int,
-    val id: String,
-    val url: String,
-    val width: Int
-)
+import io.realm.RealmObject
+import io.realm.annotations.Ignore
 
-data class Category(
-    val id: Int,
-    val name: String
+open class Cat(
+    @Ignore
+    var breeds: List<Any>,
+    @Ignore
+    var categories: List<Category>,
+    var height: Int,
+    var id: String,
+    var url: String,
+    var width: Int
+) : RealmObject() {
+
+    constructor() : this(listOf(), listOf(), 0, "", "", 0)
+}
+
+open class Category(
+    var id: Int,
+    var name: String
 )

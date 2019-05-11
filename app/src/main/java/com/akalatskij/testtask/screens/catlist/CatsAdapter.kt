@@ -1,4 +1,4 @@
-package com.akalatskij.testtask.screens
+package com.akalatskij.testtask.screens.catlist
 
 import android.content.Context
 import android.support.v7.widget.RecyclerView
@@ -12,6 +12,17 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import kotlinx.android.synthetic.main.cat_element_layout.view.*
 
 class CatsAdapter(private var cats: List<Cat>, val context: Context) : RecyclerView.Adapter<CatsViewHolder>() {
+
+    var listener : OnCatListener
+
+    init {
+        if (context is OnCatListener) {
+            listener = context
+        } else {
+            throw ClassCastException(
+                context.toString() + " must implement OnCatListener.")
+        }
+    }
 
     override fun onCreateViewHolder(group: ViewGroup, type: Int): CatsViewHolder {
         return CatsViewHolder(
@@ -40,11 +51,15 @@ class CatsAdapter(private var cats: List<Cat>, val context: Context) : RecyclerV
             .fitCenter()
             .diskCacheStrategy(DiskCacheStrategy.SOURCE)
             .into(holder.catPhotoImage)
-
+        holder.catRadioButton.setOnCheckedChangeListener{buttonView, isChecked ->  listener.onCatSelected(cats[position], isChecked)}
     }
 }
 
 class CatsViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     val catPhotoImage = view.cat_photo
     val catRadioButton = view.cat_photo_select
+}
+
+interface OnCatListener {
+    fun onCatSelected(cat : Cat, isChecked : Boolean)
 }
