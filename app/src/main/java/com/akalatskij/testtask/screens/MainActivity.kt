@@ -1,8 +1,13 @@
-package com.akalatskij.testtask
+package com.akalatskij.testtask.screens
 
+import android.arch.lifecycle.LiveData
+import android.arch.lifecycle.Observer
+import android.arch.lifecycle.ViewModelProviders
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.GridLayoutManager
+import com.akalatskij.testtask.model.MainInterator
+import com.akalatskij.testtask.R
 import com.akalatskij.testtask.model.entity.Cat
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -13,21 +18,24 @@ class MainActivity : AppCompatActivity(), MainView {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContentView(R.layout.activity_main)
-        mainPresenter = MainPresenter(this, MainInterator())
+
+        mainPresenter = MainPresenter(this, ViewModelProviders.of(this).get(MainInterator::class.java))
         mainPresenter.getData()
         adapter = CatsAdapter(listOf(), this)
+
         cats_list.adapter = adapter
         cats_list.layoutManager = GridLayoutManager(this, 2)
-        cats_list_refresh.setOnRefreshListener(mainPresenter::getData)
+        cats_list_refresh.setOnRefreshListener(mainPresenter::getNewData)
     }
 
-    override fun setCats(cats: List<Cat>) {
+    override fun setCats(cats: LiveData<List<Cat>>) {
         cats_list_refresh.isRefreshing = false
-        adapter.setCats(cats)
+        cats.observe(this, Observer { t -> if (t != null) adapter.setCats(t) })
     }
 }
 
 interface MainView {
-    fun setCats(cats: List<Cat>)
+    fun setCats(cats: LiveData<List<Cat>>)
 }

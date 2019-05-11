@@ -1,20 +1,26 @@
-package com.akalatskij.testtask
+package com.akalatskij.testtask.screens
 
 import android.content.Context
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.akalatskij.testtask.R
 import com.akalatskij.testtask.model.entity.Cat
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import kotlinx.android.synthetic.main.cat_element_layout.view.*
 
-class CatsAdapter(private var cats : List<Cat>, val context: Context) : RecyclerView.Adapter<CatsViewHolder>() {
+class CatsAdapter(private var cats: List<Cat>, val context: Context) : RecyclerView.Adapter<CatsViewHolder>() {
 
     override fun onCreateViewHolder(group: ViewGroup, type: Int): CatsViewHolder {
-        return CatsViewHolder(LayoutInflater.from(group.context).inflate(R.layout.cat_element_layout, group, false))
+        return CatsViewHolder(
+            LayoutInflater.from(group.context).inflate(
+                R.layout.cat_element_layout,
+                group,
+                false
+            )
+        )
     }
 
     override fun getItemCount(): Int {
@@ -38,7 +44,7 @@ class CatsAdapter(private var cats : List<Cat>, val context: Context) : Recycler
     }
 }
 
-class CatsViewHolder(view : View) : RecyclerView.ViewHolder(view) {
+class CatsViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     val catPhotoImage = view.cat_photo
     val catRadioButton = view.cat_photo_select
 }
