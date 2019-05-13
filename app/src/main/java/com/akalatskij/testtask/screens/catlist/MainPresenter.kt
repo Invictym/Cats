@@ -21,4 +21,8 @@ class MainPresenter(private var mainView: MainView, private val mainInteractor: 
     fun removeFromFavorite(cat: CatJson) {
         mainInteractor.removeCat(cat)
     }
+
+    fun saveImageToDir(name: String, bitmap: Bitmap) {
+        mainInteractor.saveImageToDir(name, bitmap)
+    }
 }

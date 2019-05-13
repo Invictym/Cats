@@ -12,6 +12,7 @@ import com.akalatskij.testtask.model.entity.CatJson
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import kotlinx.android.synthetic.main.cat_element_layout.view.*
+import java.lang.Exception
 
 class CatsAdapter(private var cats: ArrayList<CatJson>, val context: Context) : RecyclerView.Adapter<CatsViewHolder>() {
 
@@ -55,14 +56,24 @@ class CatsAdapter(private var cats: ArrayList<CatJson>, val context: Context) : 
             .fitCenter()
             .diskCacheStrategy(DiskCacheStrategy.SOURCE)
             .into(holder.catPhotoImage)
-
+        holder.catPhotoImage.setOnClickListener { v ->
+            if (holder.catPhotoImage.drawable.current is BitmapDrawable) {
+                listener.onClickOnImage(
+                    cats[position].id,
+                    (holder.catPhotoImage.drawable.current as BitmapDrawable).bitmap
+                )
+            }
+        }
         holder.catRadioButton.setOnCheckedChangeListener { _, isChecked ->
-
-            listener.onCatSelected(
-                cats[position],
-                isChecked,
-                (holder.catPhotoImage.drawable.current as BitmapDrawable).bitmap
-            )
+            if (holder.catPhotoImage.drawable.current is BitmapDrawable) {
+                listener.onCatSelected(
+                    cats[position],
+                    isChecked,
+                    (holder.catPhotoImage.drawable.current as BitmapDrawable).bitmap
+                )
+            } else {
+                holder.catRadioButton.isChecked = !isChecked
+            }
         }
     }
 }
@@ -74,4 +85,5 @@ class CatsViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
 interface OnCatListener {
     fun onCatSelected(cat: CatJson, isChecked: Boolean, image: Bitmap)
+    fun onClickOnImage(name: String, bitmap: Bitmap)
 }
