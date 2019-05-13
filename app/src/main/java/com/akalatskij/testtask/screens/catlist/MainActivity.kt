@@ -4,6 +4,7 @@ import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
+import android.graphics.Bitmap
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.GridLayoutManager
@@ -11,7 +12,7 @@ import android.view.Menu
 import android.view.MenuItem
 import com.akalatskij.testtask.model.MainInterator
 import com.akalatskij.testtask.R
-import com.akalatskij.testtask.model.entity.Cat
+import com.akalatskij.testtask.model.entity.CatJson
 import com.akalatskij.testtask.screens.favoritcat.FavoriteCatsListActivity
 import io.realm.Realm
 import kotlinx.android.synthetic.main.activity_main.*
@@ -47,14 +48,17 @@ class MainActivity : AppCompatActivity(), MainView, OnCatListener {
         return super.onOptionsItemSelected(item)
     }
 
-    override fun setCats(cats: LiveData<ArrayList<Cat>>) {
+    override fun setCats(cats: LiveData<ArrayList<CatJson>>) {
         cats_list_refresh.isRefreshing = false
-        cats.observe(this, Observer { t -> if (t != null) adapter.setCats(t) })
+        cats.observe(this, Observer { cats ->
+            if (cats != null) adapter.setCats(cats)
+            cats_list_refresh.isRefreshing = false
+        })
     }
 
-    override fun onCatSelected(cat: Cat, isChecked : Boolean) {
+    override fun onCatSelected(cat: CatJson, isChecked: Boolean, image: Bitmap) {
         if (isChecked) {
-            mainPresenter.addCatToFavorite(cat)
+            mainPresenter.addCatToFavorite(cat, image)
         } else {
             mainPresenter.removeFromFavorite(cat)
         }
@@ -62,5 +66,5 @@ class MainActivity : AppCompatActivity(), MainView, OnCatListener {
 }
 
 interface MainView {
-    fun setCats(cats: LiveData<ArrayList<Cat>>)
+    fun setCats(cats: LiveData<ArrayList<CatJson>>)
 }

@@ -1,9 +1,10 @@
 package com.akalatskij.testtask.screens.catlist
 
+import android.graphics.Bitmap
 import com.akalatskij.testtask.model.MainInterator
-import com.akalatskij.testtask.model.entity.Cat
+import com.akalatskij.testtask.model.entity.CatJson
 
-class MainPresenter(private var mainView : MainView, private val mainInteractor : MainInterator) {
+class MainPresenter(private var mainView: MainView, private val mainInteractor: MainInterator) {
 
     fun getData() {
         mainView.setCats(mainInteractor.getCats())
@@ -13,11 +14,11 @@ class MainPresenter(private var mainView : MainView, private val mainInteractor 
         mainInteractor.loadCats()
     }
 
-    fun addCatToFavorite(cat : Cat) {
-        mainInteractor.saveCat(cat)
+    fun addCatToFavorite(cat: CatJson, image: Bitmap) {
+        mainInteractor.saveCat(cat, image)
     }
 
-    fun removeFromFavorite(cat: Cat) {
+    fun removeFromFavorite(cat: CatJson) {
         mainInteractor.removeCat(cat)
     }
 }

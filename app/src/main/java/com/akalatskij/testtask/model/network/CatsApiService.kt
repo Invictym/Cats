@@ -15,7 +15,7 @@ interface CatsApiService {
     ("x-api-key: 57a32f2c-1a74-4c8d-aa27-4e7110f27ee1")
     @GET("images/search")
     fun getCats(@Query("limit") limit: Int):
-            Observable<List<CatJson>>
+            Observable<ArrayList<CatJson>>
 
     companion object {
         fun create(): CatsApiService {

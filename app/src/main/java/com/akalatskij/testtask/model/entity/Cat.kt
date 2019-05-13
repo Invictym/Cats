@@ -4,9 +4,8 @@ import io.realm.RealmObject
 
 open class Cat(
     var id: String = "",
-    var url: String = "",
+    var image: ByteArray,
     var save: Boolean = true
 ) : RealmObject() {
-
-    constructor() : this("")
+    constructor(): this("", ByteArray(0))
 }

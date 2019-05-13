@@ -1,24 +1,24 @@
-package com.akalatskij.testtask.screens.catlist
+package com.akalatskij.testtask.screens.favoritcat
 
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.drawable.BitmapDrawable
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.akalatskij.testtask.R
-import com.akalatskij.testtask.model.entity.CatJson
+import com.akalatskij.testtask.model.entity.Cat
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import kotlinx.android.synthetic.main.cat_element_layout.view.*
 
-class CatsAdapter(private var cats: ArrayList<CatJson>, val context: Context) : RecyclerView.Adapter<CatsViewHolder>() {
+class FavoriteCatsAdapter(private var cats: ArrayList<Cat>, val context: Context) :
+    RecyclerView.Adapter<CatsViewHolder>() {
 
-    var listener: OnCatListener
+    var listener: OnFavoriteCatListener
 
     init {
-        if (context is OnCatListener) {
+        if (context is OnFavoriteCatListener) {
             listener = context
         } else {
             throw ClassCastException(
@@ -41,28 +41,23 @@ class CatsAdapter(private var cats: ArrayList<CatJson>, val context: Context) : 
         return cats.size
     }
 
-    fun setCats(cats: ArrayList<CatJson>) {
-        this.cats = cats
+    fun setCats(cats: List<Cat>) {
+        this.cats = ArrayList(cats)
         notifyDataSetChanged()
     }
 
     override fun onBindViewHolder(holder: CatsViewHolder, position: Int) {
         Glide.with(context)
-            .load(cats[position].url)
-            .asBitmap()
+            .load(cats[position].image)
             .placeholder(R.drawable.ic_error_red_24dp)
             .override(1000, 1000)
             .fitCenter()
             .diskCacheStrategy(DiskCacheStrategy.SOURCE)
             .into(holder.catPhotoImage)
-
+        Log.d("CHEEEEKED", "" + cats[position].save)
+        holder.catRadioButton.isChecked = cats[position].save
         holder.catRadioButton.setOnCheckedChangeListener { _, isChecked ->
-
-            listener.onCatSelected(
-                cats[position],
-                isChecked,
-                (holder.catPhotoImage.drawable.current as BitmapDrawable).bitmap
-            )
+            listener.onCatSelected(cats[position], isChecked)
         }
     }
 }
@@ -72,6 +67,6 @@ class CatsViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     val catRadioButton = view.cat_photo_select
 }
 
-interface OnCatListener {
-    fun onCatSelected(cat: CatJson, isChecked: Boolean, image: Bitmap)
+interface OnFavoriteCatListener {
+    fun onCatSelected(cat: Cat, isChecked: Boolean)
 }

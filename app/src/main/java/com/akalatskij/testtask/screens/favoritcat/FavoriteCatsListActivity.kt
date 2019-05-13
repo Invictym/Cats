@@ -8,19 +8,17 @@ import com.akalatskij.testtask.R
 import com.akalatskij.testtask.model.MainInterator
 import com.akalatskij.testtask.model.entity.Cat
 import com.akalatskij.testtask.model.storage.RealmLiveData
-import com.akalatskij.testtask.screens.catlist.CatsAdapter
-import com.akalatskij.testtask.screens.catlist.OnCatListener
 import kotlinx.android.synthetic.main.activity_favorite_cats_list.*
 
-class FavoriteCatsListActivity : AppCompatActivity(), FavoriteCatsListView, OnCatListener {
+class FavoriteCatsListActivity : AppCompatActivity(), FavoriteCatsListView, OnFavoriteCatListener {
 
-    lateinit var adapter: CatsAdapter
+    lateinit var adapter: FavoriteCatsAdapter
     lateinit var catsPresenter: FavoriteCatsPresenter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_favorite_cats_list)
-        adapter = CatsAdapter(listOf(), this)
+        adapter = FavoriteCatsAdapter(arrayListOf(), this)
         selected_cats.adapter = adapter
         selected_cats.layoutManager = GridLayoutManager(this, 2)
 
@@ -29,15 +27,15 @@ class FavoriteCatsListActivity : AppCompatActivity(), FavoriteCatsListView, OnCa
 
     }
 
-    override fun onCatSelected(cat: Cat,  isCheked : Boolean) {
+    override fun onCatSelected(cat: Cat, isCheked: Boolean) {
         catsPresenter.removeCat(cat)
     }
 
     override fun setCats(cat: RealmLiveData<Cat>) {
-        cat.observe(this, Observer { t -> if (t != null) adapter.setCats(t) })
+        cat.observe(this, Observer { cats -> if (cats != null) adapter.setCats(cats) })
     }
 }
 
 interface FavoriteCatsListView {
-    fun setCats(cat : RealmLiveData<Cat>)
+    fun setCats(cat: RealmLiveData<Cat>)
 }
