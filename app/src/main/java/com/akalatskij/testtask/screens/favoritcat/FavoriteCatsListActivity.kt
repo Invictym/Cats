@@ -1,16 +1,16 @@
 package com.akalatskij.testtask.screens.favoritcat
 
 import android.arch.lifecycle.Observer
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.GridLayoutManager
 import com.akalatskij.testtask.R
 import com.akalatskij.testtask.model.MainInterator
 import com.akalatskij.testtask.model.entity.Cat
 import com.akalatskij.testtask.model.storage.RealmLiveData
+import com.akalatskij.testtask.screens.BaseActivity
 import kotlinx.android.synthetic.main.activity_favorite_cats_list.*
 
-class FavoriteCatsListActivity : AppCompatActivity(), FavoriteCatsListView, OnFavoriteCatListener {
+class FavoriteCatsListActivity: BaseActivity(), FavoriteCatsListView, OnFavoriteCatListener {
 
     lateinit var adapter: FavoriteCatsAdapter
     lateinit var catsPresenter: FavoriteCatsPresenter
@@ -24,7 +24,10 @@ class FavoriteCatsListActivity : AppCompatActivity(), FavoriteCatsListView, OnFa
 
         catsPresenter = FavoriteCatsPresenter(this, MainInterator())
         catsPresenter.getData()
+    }
 
+    override fun saveCat(res: Boolean) {
+        catsPresenter.saveImageToDir(res)
     }
 
     override fun onCatSelected(cat: Cat, isCheked: Boolean) {

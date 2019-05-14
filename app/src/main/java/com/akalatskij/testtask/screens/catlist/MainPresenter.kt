@@ -1,13 +1,16 @@
 package com.akalatskij.testtask.screens.catlist
 
+import android.arch.lifecycle.LiveData
 import android.graphics.Bitmap
 import com.akalatskij.testtask.model.MainInterator
 import com.akalatskij.testtask.model.entity.CatJson
+import com.akalatskij.testtask.screens.BaseView
+import com.akalatskij.testtask.screens.favoritcat.BasePresenter
 
-class MainPresenter(private var mainView: MainView, private val mainInteractor: MainInterator) {
+class MainPresenter(private var mainView: MainView, private val mainInteractor: MainInterator): BasePresenter(mainView as BaseView, mainInteractor) {
 
-    fun getData() {
-        mainView.setCats(mainInteractor.getCats())
+    fun getData() : LiveData<ArrayList<CatJson>> {
+       return mainInteractor.getCats()
     }
 
     fun getNewData() {
@@ -22,7 +25,5 @@ class MainPresenter(private var mainView: MainView, private val mainInteractor: 
         mainInteractor.removeCat(cat)
     }
 
-    fun saveImageToDir(name: String, bitmap: Bitmap) {
-        mainInteractor.saveImageToDir(name, bitmap)
-    }
+
 }

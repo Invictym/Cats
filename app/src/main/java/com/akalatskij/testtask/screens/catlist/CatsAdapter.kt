@@ -56,7 +56,7 @@ class CatsAdapter(private var cats: ArrayList<CatJson>, val context: Context) : 
             .fitCenter()
             .diskCacheStrategy(DiskCacheStrategy.SOURCE)
             .into(holder.catPhotoImage)
-        holder.catPhotoImage.setOnClickListener { v ->
+        holder.catPhotoImage.setOnClickListener {
             if (holder.catPhotoImage.drawable.current is BitmapDrawable) {
                 listener.onClickOnImage(
                     cats[position].id,

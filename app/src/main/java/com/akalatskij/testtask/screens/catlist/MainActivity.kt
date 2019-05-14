@@ -6,7 +6,6 @@ import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
@@ -16,11 +15,12 @@ import android.view.MenuItem
 import com.akalatskij.testtask.model.MainInterator
 import com.akalatskij.testtask.R
 import com.akalatskij.testtask.model.entity.CatJson
+import com.akalatskij.testtask.screens.BaseActivity
 import com.akalatskij.testtask.screens.favoritcat.FavoriteCatsListActivity
 import io.realm.Realm
 import kotlinx.android.synthetic.main.activity_main.*
 
-class MainActivity : AppCompatActivity(), MainView, OnCatListener {
+class MainActivity : BaseActivity(), MainView, OnCatListener {
 
     private lateinit var mainPresenter: MainPresenter
     private lateinit var adapter: CatsAdapter
@@ -29,15 +29,23 @@ class MainActivity : AppCompatActivity(), MainView, OnCatListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setContentView(R.layout.activity_main)
-
         Realm.init(this)
+        mainPresenter = MainPresenter(this, ViewModelProviders.of(this).get(MainInterator::class.java))
+
+        setContentView(R.layout.activity_main)
 
         checkPermission()
 
-        mainPresenter = MainPresenter(this, ViewModelProviders.of(this).get(MainInterator::class.java))
-        mainPresenter.getData()
-        adapter = CatsAdapter(arrayListOf(), this)
+        var cats = mainPresenter.getData().value
+        if (cats != null) {
+            adapter = CatsAdapter(cats, this)
+        }
+
+        mainPresenter.getData().observe(this, Observer { catsRes ->
+            if (catsRes != null) adapter.setCats(catsRes)
+            cats_list_refresh.isRefreshing = false
+        })
+
 
         cats_list.adapter = adapter
         cats_list.layoutManager = GridLayoutManager(this, 2)
@@ -54,6 +62,10 @@ class MainActivity : AppCompatActivity(), MainView, OnCatListener {
         }
     }
 
+    override fun saveCat(res: Boolean) {
+        mainPresenter.saveImageToDir(res)
+    }
+
     override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.main_menu, menu)
         return super.onPrepareOptionsMenu(menu)
@@ -66,10 +78,6 @@ class MainActivity : AppCompatActivity(), MainView, OnCatListener {
 
     override fun setCats(cats: LiveData<ArrayList<CatJson>>) {
         cats_list_refresh.isRefreshing = false
-        cats.observe(this, Observer { cats ->
-            if (cats != null) adapter.setCats(cats)
-            cats_list_refresh.isRefreshing = false
-        })
     }
 
     override fun onCatSelected(cat: CatJson, isChecked: Boolean, image: Bitmap) {
@@ -81,7 +89,7 @@ class MainActivity : AppCompatActivity(), MainView, OnCatListener {
     }
 
     override fun onClickOnImage(name: String, bitmap: Bitmap) {
-        mainPresenter.saveImageToDir(name, bitmap)
+        mainPresenter.tryToSaveCat(name, bitmap)
     }
 }
 

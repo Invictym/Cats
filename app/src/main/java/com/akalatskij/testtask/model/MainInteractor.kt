@@ -4,30 +4,30 @@ import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import android.graphics.Bitmap
-import android.net.Uri
 import android.os.Environment
 import android.util.Log
 import com.akalatskij.testtask.model.entity.Cat
 import com.akalatskij.testtask.model.entity.CatJson
 import com.akalatskij.testtask.model.network.CatsApiService
+import com.akalatskij.testtask.model.storage.LocalFileWorker
 import com.akalatskij.testtask.model.storage.RealmLiveData
 import com.akalatskij.testtask.model.storage.RealmWorker
 import com.akalatskij.testtask.model.storage.Storage
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import java.io.*
-import java.util.*
 import kotlin.collections.ArrayList
-import kotlin.math.log
-
 class MainInterator : ViewModel() {
 
     val cats: MutableLiveData<ArrayList<CatJson>> = MutableLiveData()
     val storage: Storage = RealmWorker()
     val defaultCount = 10
+    val localFileWorker = LocalFileWorker()
+    val path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString()
 
     init {
         loadCats(defaultCount)
+        cats.value = arrayListOf()
     }
 
     fun getCats(): LiveData<ArrayList<CatJson>> {
@@ -60,6 +60,10 @@ class MainInterator : ViewModel() {
         removeCat(convert(cat, ByteArray(0)))
     }
 
+    fun saveImageToDir(name: String, bitmap: Bitmap) {
+        localFileWorker.saveImageToDir(path, name, bitmap)
+    }
+
     fun loadCats(count: Int) {
         CatsApiService.create().getCats(count)
             .subscribeOn(Schedulers.io())
@@ -72,34 +76,6 @@ class MainInterator : ViewModel() {
 
     fun loadCats() {
         loadCats(defaultCount)
-    }
-
-    fun saveImageToDir(name: String, bitmap: Bitmap): Uri {
-        // Get the external storage directory path
-        val path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString()
-
-        // Create a file to save the image
-        val file = File(path, "$name.jpg")
-
-        try {
-            // Get the file output stream
-            val stream: OutputStream = FileOutputStream(file)
-
-            // Compress the bitmap
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
-
-            // Flush the output stream
-            stream.flush()
-
-            // Close the output stream
-            stream.close()
-        } catch (e: IOException){ // Catch the exception
-            Log.e("Save erro", e.toString())
-        }
-
-        // Return the saved image path to uri
-        Log.d("Save image", file.absolutePath)
-        return Uri.parse(file.absolutePath)
     }
 
     fun convert(cat: CatJson?, image: ByteArray): Cat {
